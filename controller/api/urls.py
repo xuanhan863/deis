@@ -230,7 +230,7 @@ urlpatterns = patterns(
     url(r'^clusters/?',
         views.ClusterViewSet.as_view({'get': 'list', 'post': 'create'})),
     # Domains
-    url(r'^apps/(?P<id>[-_\w]+)/domains/(?P<domain>[.-_\w]+)/?',
+    url(r'^apps/(?P<id>[-_\w]+)/domains/?',
         views.DomainViewSet.as_view({'post': 'create'})),
     url(r'^apps/(?P<id>[-_\w]+)/domains/?',
         views.DomainViewSet.as_view({'get': 'list'})),
