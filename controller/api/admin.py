@@ -14,6 +14,7 @@ from .models import Build
 from .models import Cluster
 from .models import Config
 from .models import Container
+from .models import Domain
 from .models import Key
 from .models import Release
 
@@ -68,6 +69,39 @@ class ContainerAdmin(admin.ModelAdmin):
 admin.site.register(Container, ContainerAdmin)
 
 
+<<<<<<< HEAD
+=======
+class DomainAdmin(admin.ModelAdmin):
+    """Set presentation options for :class:`~api.models.Domain` models
+    in the Django admin.
+    """
+    date_hierarchy = 'created'
+    list_display = ('owner', 'app', 'domain')
+    list_filter = ('owner', 'app')
+admin.site.register(Domain, DomainAdmin)
+
+
+class FlavorAdmin(admin.ModelAdmin):
+    """Set presentation options for :class:`~api.models.Flavor` models
+    in the Django admin.
+    """
+    date_hierarchy = 'created'
+    list_display = ('id', 'owner', 'provider')
+    list_filter = ('owner', 'provider')
+admin.site.register(Flavor, FlavorAdmin)
+
+
+class FormationAdmin(admin.ModelAdmin):
+    """Set presentation options for :class:`~api.models.Formation` models
+    in the Django admin.
+    """
+    date_hierarchy = 'created'
+    list_display = ('id', 'owner')
+    list_filter = ('owner',)
+admin.site.register(Formation, FormationAdmin)
+
+
+>>>>>>> Add Domains in the admin interface
 class KeyAdmin(admin.ModelAdmin):
     """Set presentation options for :class:`~api.models.Key` models
     in the Django admin.
