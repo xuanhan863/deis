@@ -1501,7 +1501,7 @@ class DeisClient(object):
         else:
             raise ResponseError(response)
 
-    def domains_rm(self, args):
+    def domains_remove(self, args):
         """
         Remove a custom domain for an app
 
