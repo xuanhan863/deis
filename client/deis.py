@@ -1476,24 +1476,6 @@ class DeisClient(object):
         else:
             raise ResponseError(response)
 
-    def domains_list(self, args):
-        """
-        List the custom domains for an app
-
-        Usage: deis domains:list [--app=<app>]
-        """
-        app = args.get('--app')
-        if not app:
-            app = self._session.app
-
-        response = self._dispatch(
-            'get', "/api/apps/{app}/domains".format(app=app))
-
-        if response.status_code == requests.codes.ok:  # @UndefinedVariable
-            print(json.dumps(response.json(), indent=2))
-        else:
-            raise ResponseError(response)
-
     def domains_add(self, args):
         """
         Add a custom domain for an app
@@ -1539,6 +1521,24 @@ class DeisClient(object):
 
         if response.status_code == requests.codes.ok:  # @UndefinedVariable
             print("Domain removed")
+        else:
+            raise ResponseError(response)
+
+    def domains_list(self, args):
+        """
+        List the custom domains for an app
+
+        Usage: deis domains:list [--app=<app>]
+        """
+        app = args.get('--app')
+        if not app:
+            app = self._session.app
+
+        response = self._dispatch(
+            'get', "/api/apps/{app}/domains".format(app=app))
+
+        if response.status_code == requests.codes.ok:  # @UndefinedVariable
+            print(json.dumps(response.json(), indent=2))
         else:
             raise ResponseError(response)
 
