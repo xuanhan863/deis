@@ -16,6 +16,7 @@ Subcommands, use ``deis help [subcommand]`` to learn more::
   clusters      manage clusters used to host applications
   ps            manage processes inside an app container
   config        manage environment variables that define app config
+  domains       manage and assign domain names to your applications
   builds        manage builds created using `git push`
   releases      manage releases of an application
 
