@@ -470,7 +470,7 @@ class DomainViewSet(BaseAppViewSet):
     def post_save(self, obj, created=False):
         if created:
             obj.app.publish()
-            obj.app.formation.converge()
+            obj.app.converge()
 
     def create(self, request, *args, **kwargs):
         domain = get_object_or_404(models.Domain, id=self.kwargs['id'])
@@ -482,7 +482,7 @@ class DomainViewSet(BaseAppViewSet):
         domain = get_object_or_404(models.Domain, id=self.kwargs['id'])
         domain.delete()
         domain.app.publish()
-        domain.app.formation.converge()
+        domain.app.converge()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
