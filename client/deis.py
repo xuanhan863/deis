@@ -1476,9 +1476,22 @@ class DeisClient(object):
         else:
             raise ResponseError(response)
 
+    def domains(self, args):
+        """
+        Valid commands for domains:
+
+        domains:add           bind a domain to an application
+        domains:list          list domains bound to an application
+        domains:remove        unbind a domain from an application
+
+        Use `deis help [command]` to learn more
+        """
+        return self.domains_list(args)
+
+
     def domains_add(self, args):
         """
-        Add a custom domain for an app
+        Bind a domain to an application
 
         Usage: deis domains:add <domain> [--app=<app>]
         """
@@ -1503,7 +1516,7 @@ class DeisClient(object):
 
     def domains_remove(self, args):
         """
-        Remove a custom domain for an app
+        Unbind a domain for an application
 
         Usage: deis domains:rm <domain> [--app=<app>]
         """
@@ -1526,7 +1539,7 @@ class DeisClient(object):
 
     def domains_list(self, args):
         """
-        List the custom domains for an app
+        List domains bound to an application
 
         Usage: deis domains:list [--app=<app>]
         """
