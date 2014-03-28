@@ -1551,7 +1551,6 @@ class DeisClient(object):
         else:
             raise ResponseError(response)
 
-
     def releases(self, args):
         """
         Valid commands for releases:
