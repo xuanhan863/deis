@@ -193,9 +193,6 @@ class DomainSerializer(serializers.ModelSerializer):
                 "The domain {} is already in use by another app".format(value))
 
         domain_parts = value.split('.')
-        domain_parent = '.'.join(domain_parts[1:])
-        attrs['domain_parent'] = domain_parent
-
         if domain_parts[0] == '*':
             raise serializers.ValidationError(
                 "Adding a wildcard subdomain is currently not supported".format(value))

@@ -229,7 +229,7 @@ urlpatterns = patterns(
             'get': 'retrieve', 'patch': 'partial_update', 'delete': 'destroy'})),
     url(r'^clusters/?',
         views.ClusterViewSet.as_view({'get': 'list', 'post': 'create'})),
-    # Domains
+    # application domains
     url(r'^domains/(?P<id>[-\._\w]+)/?',
         views.DomainViewSet.as_view({'delete': 'destroy'})),
     url(r'^apps/(?P<id>[-_\w]+)/domains/?',

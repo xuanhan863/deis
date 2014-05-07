@@ -16,7 +16,6 @@ class Migration(SchemaMigration):
             ('owner', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
             ('app', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.App'])),
             ('domain', self.gf('django.db.models.fields.TextField')(unique=True)),
-            ('domain_parent', self.gf('django.db.models.fields.TextField')()),
         ))
         db.send_create_signal(u'api', ['Domain'])
 
@@ -29,52 +28,54 @@ class Migration(SchemaMigration):
     models = {
         u'api.app': {
             'Meta': {'object_name': 'App'},
-            'containers': ('json_field.fields.JSONField', [], {'default': "u'{}'", 'blank': 'True'}),
+            'cluster': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.Cluster']"}),
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'formation': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.Formation']"}),
             'id': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '64'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
+            'structure': ('json_field.fields.JSONField', [], {'default': "u'{}'", 'blank': 'True'}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'uuid': ('api.fields.UuidField', [], {'unique': 'True', 'max_length': '32', 'primary_key': 'True'})
         },
         u'api.build': {
             'Meta': {'ordering': "[u'-created']", 'unique_together': "((u'app', u'uuid'),)", 'object_name': 'Build'},
             'app': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.App']"}),
-            'checksum': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'config': ('json_field.fields.JSONField', [], {'default': "u'null'", 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'dockerfile': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'image': ('django.db.models.fields.CharField', [], {'default': "u'deis/slugbuilder'", 'max_length': '256'}),
-            'output': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'image': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
-            'procfile': ('json_field.fields.JSONField', [], {'default': "u'null'", 'blank': 'True'}),
-            'sha': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'size': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
+            'uuid': ('api.fields.UuidField', [], {'unique': 'True', 'max_length': '32', 'primary_key': 'True'})
+        },
+        u'api.cluster': {
+            'Meta': {'object_name': 'Cluster'},
+            'auth': ('django.db.models.fields.TextField', [], {}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'domain': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'hosts': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
+            'id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '128'}),
+            'options': ('json_field.fields.JSONField', [], {'default': "u'{}'", 'blank': 'True'}),
+            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
+            'type': ('django.db.models.fields.CharField', [], {'default': "u'coreos'", 'max_length': '16'}),
+            'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'uuid': ('api.fields.UuidField', [], {'unique': 'True', 'max_length': '32', 'primary_key': 'True'})
         },
         u'api.config': {
-            'Meta': {'ordering': "[u'-created']", 'unique_together': "((u'app', u'version'),)", 'object_name': 'Config'},
+            'Meta': {'ordering': "[u'-created']", 'unique_together': "((u'app', u'uuid'),)", 'object_name': 'Config'},
             'app': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.App']"}),
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'uuid': ('api.fields.UuidField', [], {'unique': 'True', 'max_length': '32', 'primary_key': 'True'}),
-            'values': ('json_field.fields.JSONField', [], {'default': "u'{}'", 'blank': 'True'}),
-            'version': ('django.db.models.fields.PositiveIntegerField', [], {})
+            'values': ('json_field.fields.JSONField', [], {'default': "u'{}'", 'blank': 'True'})
         },
         u'api.container': {
-            'Meta': {'ordering': "[u'created']", 'unique_together': "((u'app', u'type', u'num'), (u'formation', u'port'))", 'object_name': 'Container'},
+            'Meta': {'ordering': "[u'created']", 'object_name': 'Container'},
             'app': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.App']"}),
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'formation': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.Formation']"}),
-            'node': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.Node']"}),
             'num': ('django.db.models.fields.PositiveIntegerField', [], {}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
-            'port': ('django.db.models.fields.PositiveIntegerField', [], {}),
-            'status': ('django.db.models.fields.CharField', [], {'default': "u'up'", 'max_length': '64'}),
-            'type': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'release': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.Release']"}),
+            'state': ('django_fsm.FSMField', [], {'default': "u'initialized'", 'max_length': '50'}),
+            'type': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'uuid': ('api.fields.UuidField', [], {'unique': 'True', 'max_length': '32', 'primary_key': 'True'})
         },
@@ -83,30 +84,9 @@ class Migration(SchemaMigration):
             'app': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.App']"}),
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'domain': ('django.db.models.fields.TextField', [], {'unique': 'True'}),
-            'domain_parent': ('django.db.models.fields.TextField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
-        },
-        u'api.flavor': {
-            'Meta': {'unique_together': "((u'owner', u'id'),)", 'object_name': 'Flavor'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.SlugField', [], {'max_length': '64'}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
-            'params': ('json_field.fields.JSONField', [], {'default': "u'null'", 'blank': 'True'}),
-            'provider': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.Provider']"}),
-            'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'uuid': ('api.fields.UuidField', [], {'unique': 'True', 'max_length': '32', 'primary_key': 'True'})
-        },
-        u'api.formation': {
-            'Meta': {'unique_together': "((u'owner', u'id'),)", 'object_name': 'Formation'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'domain': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '64'}),
-            'nodes': ('json_field.fields.JSONField', [], {'default': "u'{}'", 'blank': 'True'}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
-            'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'uuid': ('api.fields.UuidField', [], {'unique': 'True', 'max_length': '32', 'primary_key': 'True'})
         },
         u'api.key': {
             'Meta': {'unique_together': "((u'owner', u'id'),)", 'object_name': 'Key'},
@@ -114,47 +94,6 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
             'public': ('django.db.models.fields.TextField', [], {'unique': 'True'}),
-            'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'uuid': ('api.fields.UuidField', [], {'unique': 'True', 'max_length': '32', 'primary_key': 'True'})
-        },
-        u'api.layer': {
-            'Meta': {'unique_together': "((u'formation', u'id'),)", 'object_name': 'Layer'},
-            'config': ('json_field.fields.JSONField', [], {'default': "u'{}'", 'blank': 'True'}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'flavor': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.Flavor']"}),
-            'formation': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.Formation']"}),
-            'id': ('django.db.models.fields.SlugField', [], {'max_length': '64'}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
-            'proxy': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'runtime': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'ssh_port': ('django.db.models.fields.SmallIntegerField', [], {'default': '22'}),
-            'ssh_private_key': ('django.db.models.fields.TextField', [], {}),
-            'ssh_public_key': ('django.db.models.fields.TextField', [], {}),
-            'ssh_username': ('django.db.models.fields.CharField', [], {'default': "u'ubuntu'", 'max_length': '64'}),
-            'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'uuid': ('api.fields.UuidField', [], {'unique': 'True', 'max_length': '32', 'primary_key': 'True'})
-        },
-        u'api.node': {
-            'Meta': {'unique_together': "((u'formation', u'id'),)", 'object_name': 'Node'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'formation': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.Formation']"}),
-            'fqdn': ('django.db.models.fields.CharField', [], {'max_length': '256', 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
-            'layer': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.Layer']"}),
-            'num': ('django.db.models.fields.PositiveIntegerField', [], {}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
-            'provider_id': ('django.db.models.fields.SlugField', [], {'max_length': '64', 'null': 'True', 'blank': 'True'}),
-            'status': ('json_field.fields.JSONField', [], {'default': "u'null'", 'null': 'True', 'blank': 'True'}),
-            'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'uuid': ('api.fields.UuidField', [], {'unique': 'True', 'max_length': '32', 'primary_key': 'True'})
-        },
-        u'api.provider': {
-            'Meta': {'unique_together': "((u'owner', u'id'),)", 'object_name': 'Provider'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'creds': ('json_field.fields.JSONField', [], {'default': "u'null'", 'blank': 'True'}),
-            'id': ('django.db.models.fields.SlugField', [], {'max_length': '64'}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
-            'type': ('django.db.models.fields.SlugField', [], {'max_length': '16'}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'uuid': ('api.fields.UuidField', [], {'unique': 'True', 'max_length': '32', 'primary_key': 'True'})
         },
@@ -175,9 +114,10 @@ class Migration(SchemaMigration):
         u'api.release': {
             'Meta': {'ordering': "[u'-created']", 'unique_together': "((u'app', u'version'),)", 'object_name': 'Release'},
             'app': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.App']"}),
-            'build': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.Build']", 'null': 'True', 'blank': 'True'}),
+            'build': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.Build']"}),
             'config': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['api.Config']"}),
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'image': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
             'summary': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),

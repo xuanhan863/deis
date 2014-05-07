@@ -464,25 +464,21 @@ class KeyViewSet(OwnerViewSet):
 class DomainViewSet(BaseAppViewSet):
     """RESTful views for :class:`~api.models.Domain`."""
 
-    model = models.Domain  # models class
+    model = models.Domain
     serializer_class = serializers.DomainSerializer
 
-    def post_save(self, obj, created=False):
+    def post_save(self, domain, created=False):
         if created:
-            obj.app.publish()
-            obj.app.converge()
-
-    def create(self, request, *args, **kwargs):
-        domain = get_object_or_404(models.Domain, id=self.kwargs['id'])
-        request._data = request.DATA.copy()
-        request.DATA['domain'] = domain
-        return super(DomainViewSet, self).create(request, *args, **kwargs)
+            release = domain.app.release_set.latest()
+            new_release = release.new(request.user)
+            domain.app.deploy(new_release)
 
     def destroy(self, request, **kwargs):
         domain = get_object_or_404(models.Domain, id=self.kwargs['id'])
         domain.delete()
-        domain.app.publish()
-        domain.app.converge()
+        release = domain.app.release_set.latest()
+        new_release = release.new(request.user)
+        domain.app.deploy(new_release)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
