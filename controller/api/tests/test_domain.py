@@ -13,7 +13,7 @@ from django.test.utils import override_settings
 
 
 @override_settings(CELERY_ALWAYS_EAGER=True)
-class DomaainTest(TestCase):
+class DomainTest(TestCase):
 
     """Tests creation of domains"""
 
@@ -22,24 +22,19 @@ class DomaainTest(TestCase):
     def setUp(self):
         self.assertTrue(
             self.client.login(username='autotest', password='password'))
-        url = '/api/providers'
-        creds = {'secret_key': 'x' * 64, 'access_key': 1 * 20}
-        body = {'id': 'autotest', 'type': 'mock', 'creds': json.dumps(creds)}
-        response = self.client.post(url, json.dumps(body), content_type='application/json')
-        self.assertEqual(response.status_code, 201)
-        url = '/api/flavors'
-        body = {'id': 'autotest', 'provider': 'autotest',
-                'params': json.dumps({'region': 'us-west-2', 'instance_size': 'm1.medium'})}
-        response = self.client.post(url, json.dumps(body), content_type='application/json')
-        self.assertEqual(response.status_code, 201)
-        formation_id = 'autotest'
-        response = self.client.post('/api/formations', json.dumps({'id': formation_id,
-                                                                   'domain': 'test.domain.org'}),
+        body = {
+            'id': 'autotest',
+            'domain': 'autotest.local',
+            'type': 'mock',
+            'hosts': 'host1,host2',
+            'auth': 'base64string',
+            'options': {},
+        }
+        response = self.client.post('/api/clusters', json.dumps(body),
                                     content_type='application/json')
         self.assertEqual(response.status_code, 201)
-
         url = '/api/apps'
-        body = {'formation': 'autotest'}
+        body = {'cluster': 'autotest'}
         response = self.client.post(url, json.dumps(body), content_type='application/json')
         self.assertEqual(response.status_code, 201)
         self.app_id = response.data['id']  # noqa
@@ -64,12 +59,12 @@ class DomaainTest(TestCase):
         self.assertEqual(0, response.data['count'])
 
     def test_manage_domain_invalid_app(self):
-        url = '/api/apps/{app_id}/domains'.format(app_id="this-app-does-not-exis")
+        url = '/api/apps/{app_id}/domains'.format(app_id="this-app-does-not-exist")
         body = {'domain': 'test-domain.example.com'}
         response = self.client.post(url, json.dumps(body), content_type='application/json')
         self.assertEqual(response.status_code, 404)
 
-        url = '/api/apps/{app_id}/domains'.format(app_id='this-app-does-not-exis')
+        url = '/api/apps/{app_id}/domains'.format(app_id='this-app-does-not-exist')
         response = self.client.get(url, content_type='application/json')
         self.assertEqual(response.status_code, 404)
 
@@ -77,12 +72,6 @@ class DomaainTest(TestCase):
         self.client.logout()
         self.assertTrue(
             self.client.login(username='autotest2', password='password'))
-        url = '/api/apps'
-        body = {'formation': 'autotest'}
-        response = self.client.post(url, json.dumps(body), content_type='application/json')
-        self.assertEqual(response.status_code, 201)
-        new_app_id = response.data['id']  # noqa
-
         url = '/api/apps/{app_id}/domains'.format(app_id=self.app_id)
         body = {'domain': 'test-domain2.example.com'}
         response = self.client.post(url, json.dumps(body), content_type='application/json')
