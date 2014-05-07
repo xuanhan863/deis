@@ -1124,7 +1124,7 @@ class DeisClient(object):
         finally:
             progress.cancel()
             progress.join()
-        if response.status_code == requests.codes.ok:  # @UndefinedVariable
+        if response.status_code == requests.codes.no_content:  # @UndefinedVariable
             print('done in {}s\n'.format(int(time.time() - before)))
             self.ps_list({}, app)
         else:
@@ -1197,11 +1197,6 @@ class DeisClient(object):
             'get', "/api/apps/{app}/domains".format(app=app))
         if response.status_code == requests.codes.ok:  # @UndefinedVariable
             print(json.dumps(response.json(), indent=2))
-        else:
-            raise ResponseError(response)
-        if response.status_code == requests.codes.no_content:  # @UndefinedVariable
-            print('done in {}s\n'.format(int(time.time() - before)))
-            self.ps_list({}, app)
         else:
             raise ResponseError(response)
 
