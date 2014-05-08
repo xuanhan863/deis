@@ -1,8 +1,6 @@
 # -*- mode: ruby -*-
 # # vi: set ft=ruby :
 
-require_relative 'contrib/coreos/override-plugin.rb'
-
 DEIS_NUM_INSTANCES = (ENV['DEIS_NUM_INSTANCES'].to_i > 0 && ENV['DEIS_NUM_INSTANCES'].to_i) || 1
 
 if DEIS_NUM_INSTANCES == 1
@@ -50,7 +48,6 @@ Vagrant.configure("2") do |config|
       # user-data bootstrapping
       config.vm.provision :file, :source => "contrib/coreos/user-data", :destination => "/tmp/vagrantfile-user-data"
       config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
-
     end
   end
 
