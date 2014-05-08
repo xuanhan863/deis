@@ -66,3 +66,15 @@ coreos:
       Type=oneshot
       ExecStart=/usr/bin/systemctl stop update-engine.service
       ExecStartPost=/usr/bin/systemctl mask update-engine.service
+  - name: write-deis-motd.service
+    command: start
+    content: |
+      [Unit]
+      Description=write the Deis motd
+
+      [Service]
+      Type=oneshot
+      ExecStartPre=/usr/bin/mkdir /run/deis
+      ExecStartPre=/usr/bin/rm /etc/motd
+      ExecStart=/bin/sh -c 'printf "Welcome to Deis. If you run into any issues, find us on GitHub (https://github.com/deis/deis) or Freenode IRC @ #deis.\n" > /run/deis/motd'
+      ExecStartPost=/usr/bin/ln -s /run/deis/motd /etc/motd
